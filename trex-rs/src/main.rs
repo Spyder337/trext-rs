@@ -1,3 +1,6 @@
+use common::piecetable::PieceTable;
+
 fn main() {
-    println!("Hello, world!");
+    let pt = PieceTable::new("Hello World!");
+    println!("{}", pt.get_text(None, None));
 }

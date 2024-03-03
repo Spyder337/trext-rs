@@ -5,7 +5,7 @@ mod tests {
     use super::piecetable::PieceTable;
 
     fn new_test_table() -> PieceTable {
-        return PieceTable::new("Hello World!");
+        PieceTable::new("Hello World!")
     }
 
     fn new_test_table_large() -> PieceTable {
@@ -22,7 +22,7 @@ mod tests {
 
     #[test]
     fn get_text() {
-        let mut pt = new_test_table_large();
+        let pt = new_test_table_large();
         test_text(&pt, "Hello World!");
     }
 

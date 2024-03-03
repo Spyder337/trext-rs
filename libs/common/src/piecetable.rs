@@ -291,7 +291,7 @@ impl PieceTable {
 
             for i in piece_start..piece_end {
                 if !init_start && i == piece_start {
-                    let len = self[i].length.clone();
+                    let len = self[i].length;
                     trimmed = self.trim_piece(i, start_so, len);
                     total += trimmed;
                     self.text_len -= trimmed;
