@@ -31,21 +31,25 @@ pub struct PieceTable {
 
 impl PieceTable {
     pub fn new(orig_txt: &str) -> Self {
-        Self {
-            buffers: vec![orig_txt.to_string(), String::new()],
-            pieces: vec![Piece::new(true, 0, orig_txt.len())],
-            text_len: orig_txt.len(),
+        if orig_txt != "" {
+            Self {
+                buffers: vec![orig_txt.to_string(), String::new()],
+                pieces: vec![Piece::new(true, 0, orig_txt.len())],
+                text_len: orig_txt.len(),
+            }
+        }
+        else {
+            Self {
+                buffers: vec![String::new(), String::new()],
+                pieces: vec![],
+                text_len: 0,
+            }
         }
     }
 
     pub fn from_file(file_path: &str) -> Self {
         let orig_txt = fs::read_to_string(file_path).expect("Error reading file.");
-
-        Self {
-            buffers: vec![orig_txt.to_string(), String::new()],
-            pieces: vec![Piece::new(true, 0, orig_txt.len())],
-            text_len: orig_txt.len(),
-        }
+        Self::new(&orig_txt)
     }
 
     pub fn find_by_pos(&self, char_pos: usize) -> Option<&Piece> {
