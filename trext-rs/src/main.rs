@@ -6,5 +6,6 @@ use std::io::Result;
 
 fn main() -> Result<()> {
     let mut app = Application::new();
-    app.run()
+    app.run()?;
+    Ok(())
 }

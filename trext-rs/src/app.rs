@@ -53,8 +53,8 @@ impl App for Application {
 
     fn handle_key_press(&mut self, key: crossterm::event::KeyCode) -> AppResult {
         match key {
-            crossterm::event::KeyCode::Backspace => todo!(),
-            crossterm::event::KeyCode::Enter => todo!(),
+            crossterm::event::KeyCode::Backspace => Ok(()),
+            crossterm::event::KeyCode::Enter => Ok(()),
             crossterm::event::KeyCode::Left => {
                 if self.counter > 0 {
                     self.counter -= 1;
@@ -76,30 +76,36 @@ impl App for Application {
                 self.counter = 0;
                 Ok(())
             }
-            crossterm::event::KeyCode::Home => todo!(),
-            crossterm::event::KeyCode::End => todo!(),
-            crossterm::event::KeyCode::PageUp => todo!(),
-            crossterm::event::KeyCode::PageDown => todo!(),
-            crossterm::event::KeyCode::Tab => todo!(),
-            crossterm::event::KeyCode::BackTab => todo!(),
-            crossterm::event::KeyCode::Delete => todo!(),
-            crossterm::event::KeyCode::Insert => todo!(),
-            crossterm::event::KeyCode::F(_) => todo!(),
-            crossterm::event::KeyCode::Char(_) => todo!(),
-            crossterm::event::KeyCode::Null => todo!(),
+            crossterm::event::KeyCode::Home => Ok(()),
+            crossterm::event::KeyCode::End => Ok(()),
+            crossterm::event::KeyCode::PageUp => Ok(()),
+            crossterm::event::KeyCode::PageDown => Ok(()),
+            crossterm::event::KeyCode::Tab => Ok(()),
+            crossterm::event::KeyCode::BackTab => Ok(()),
+            crossterm::event::KeyCode::Delete => Ok(()),
+            crossterm::event::KeyCode::Insert => Ok(()),
+            crossterm::event::KeyCode::F(_) => Ok(()),
+            crossterm::event::KeyCode::Char(c) => match c {
+                'q' => {
+                    self.toggle_exit();
+                    Ok(())
+                }
+                _ => Ok(()),
+            },
+            crossterm::event::KeyCode::Null => Ok(()),
             crossterm::event::KeyCode::Esc => {
                 self.toggle_exit();
                 Ok(())
-            },
-            crossterm::event::KeyCode::CapsLock => todo!(),
-            crossterm::event::KeyCode::ScrollLock => todo!(),
-            crossterm::event::KeyCode::NumLock => todo!(),
-            crossterm::event::KeyCode::PrintScreen => todo!(),
-            crossterm::event::KeyCode::Pause => todo!(),
-            crossterm::event::KeyCode::Menu => todo!(),
-            crossterm::event::KeyCode::KeypadBegin => todo!(),
-            crossterm::event::KeyCode::Media(_) => todo!(),
-            crossterm::event::KeyCode::Modifier(_) => todo!(),
+            }
+            crossterm::event::KeyCode::CapsLock => Ok(()),
+            crossterm::event::KeyCode::ScrollLock => Ok(()),
+            crossterm::event::KeyCode::NumLock => Ok(()),
+            crossterm::event::KeyCode::PrintScreen => Ok(()),
+            crossterm::event::KeyCode::Pause => Ok(()),
+            crossterm::event::KeyCode::Menu => Ok(()),
+            crossterm::event::KeyCode::KeypadBegin => Ok(()),
+            crossterm::event::KeyCode::Media(_) => Ok(()),
+            crossterm::event::KeyCode::Modifier(_) => Ok(()),
         }
     }
 
