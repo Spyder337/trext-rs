@@ -5,6 +5,14 @@ use std::{
 };
 
 //	Reference to a position in a buffer.
+/**
+ A [`Piece`] is a slice in a string buffer.
+
+ It contains three pieces of information:
+ * Buffer Index
+ * Start Position in Buffer
+ * Length of Slice in the Buffer
+ */
 #[derive(Clone, Copy)]
 pub struct Piece {
     is_orig: bool,
@@ -23,6 +31,10 @@ impl Piece {
 }
 
 //	Two Buffers and an array of Pieces
+/**
+ A `PieceTable` is an array of [`Piece`]s that represent on continuous piece
+ of text or document.
+ */
 pub struct PieceTable {
     buffers: Vec<String>,
     pieces: Vec<Piece>,
@@ -30,6 +42,9 @@ pub struct PieceTable {
 }
 
 impl PieceTable {
+    /**
+     Generates a piece table when supplied a string.
+     */
     pub fn new(orig_txt: &str) -> Self {
         if !orig_txt.is_empty() {
             Self {
@@ -46,11 +61,23 @@ impl PieceTable {
         }
     }
 
+    /**
+     Generates a piece table when supplied a file path.
+     */
     pub fn from_file(file_path: &str) -> Self {
         let orig_txt = fs::read_to_string(file_path).expect("Error reading file.");
         Self::new(&orig_txt)
     }
 
+    /**
+     Returns the index of the [Piece] that contains the [param].
+     
+     Example:
+     
+     A Piece table has 3 pieces \[\"Hello\", \" \", \"World!\"\]
+
+     Calling `find_by_pos(6)` would return the index of `1` for that piece.
+     */
     pub fn find_by_pos(&self, char_pos: usize) -> Option<&Piece> {
         //	Text buffer positions for the current slice.
         let mut txt_start = 0;
@@ -71,10 +98,12 @@ impl PieceTable {
         None
     }
 
+    /// Returns true if the table is empty.
     pub fn is_empty(&self) -> bool {
         self.pieces.is_empty()
     }
 
+    /// Returns the length of the table.
     pub fn len(&self) -> usize {
         if self.is_empty() {
             return 0
@@ -82,14 +111,18 @@ impl PieceTable {
         self.pieces.len()
     }
 
+    /// Returns the length of a specific buffer.
     fn get_buffer_len(&self, buffer_index: usize) -> usize {
         self.buffers[buffer_index].len()
     }
 
+    /// Returns a [String] representing a text slice in a buffer.
     fn get_buffer_slice(&self, buffer: &str, start: usize, end: usize) -> String {
         buffer[start..end].to_string()
     }
 
+    /// Modifies a [Piece]'s `start` and `length` or removes it from the table if
+    /// the whole thing is to be removed.
     pub fn trim_piece(&mut self, piece_index: usize, start_offset: usize, length: usize) -> usize {
         let piece: &mut Piece = &mut self[piece_index];
 
@@ -145,6 +178,9 @@ impl PieceTable {
         r_end - r_start
     }
 
+    /// Inserts the text into the apporpriate buffer and then inserts
+    /// a [Piece] containing `txt` into the [PieceTable] depending on
+    /// which [Piece] contains `pos`.
     pub fn insert(&mut self, txt: &str, pos: usize) {
         let start = self.get_buffer_len(1);
         self.buffers[1].push_str(txt);
@@ -231,6 +267,8 @@ impl PieceTable {
         }
     }
 
+    /// Removes a slice of text from the buffer. If necessary it deletes
+    /// [Piece]s from the [PieceTable].
     pub fn delete(&mut self, start: usize, length: usize) {
         if length == 0 {
             return;
@@ -321,6 +359,11 @@ impl PieceTable {
     }
 
     //	Start and end are absolute positions in the buffer.
+    /// Takes in two optional parameters for where to start and end in the
+    /// text buffer. It then returns a String that represents that.
+    /// 
+    /// Note: The text buffer in this context is the document created by the
+    /// [Piece]s in the [PieceTable].
     pub fn get_text(&self, s_start: Option<usize>, s_end: Option<usize>) -> String {
         //	Locate the starting piece and append it's sliced
         //	text. Then find the end piece and append it's text.
@@ -361,7 +404,7 @@ impl PieceTable {
                 let start_offset = start - txt_start;
                 let end_offset = txt_end - end;
                 ret.push_str(
-                    self.get_piece_text(buffer, i, start_offset, end_offset)
+                    self.get_piece_text(i, start_offset, end_offset)
                         .as_str(),
                 );
                 break;
@@ -369,22 +412,26 @@ impl PieceTable {
             //	Piece contains start
             else if start >= txt_start {
                 let start_offset = start - txt_start;
-                ret.push_str(self.get_piece_text(buffer, i, start_offset, 0).as_str());
+                ret.push_str(self.get_piece_text(i, start_offset, 0).as_str());
             }
             //	Piece contains end
             else if has_end && end <= txt_end {
                 let end_offset = start - txt_end;
-                ret.push_str(self.get_piece_text(buffer, i, 0, end_offset).as_str());
+                ret.push_str(self.get_piece_text(i, 0, end_offset).as_str());
                 break;
             }
             //	Piece contains neither
             else {
-                ret.push_str(self.get_piece_text(buffer, i, 0, 0).as_str());
+                ret.push_str(self.get_piece_text(i, 0, 0).as_str());
             }
         }
         ret
     }
 
+    /// Takes a character index and returns the [Piece] in the [PieceTable]
+    /// that contains it.
+    /// 
+    /// If the position is out of bounds then [None] is returned.
     pub fn get_pos_piece(&self, char_index: usize) -> Option<usize> {
         for n in 0..self.pieces.len() {
             let p = self.pieces.get(n).unwrap();
@@ -396,15 +443,21 @@ impl PieceTable {
         None
     }
 
+    /// Takes in a piece and offsets from the start and end and returns
+    /// the text from the buffer that the piece belongs to.
     fn get_piece_text(
         &self,
-        buffer_index: usize,
         piece_index: usize,
         start_offset: usize,
         end_offset: usize,
     ) -> String {
-        let buffer = &self.buffers[buffer_index];
         let piece = self[piece_index];
+        let buffer_index = if piece.is_orig {
+            0
+        } else {
+            1
+        };
+        let buffer = &self.buffers[buffer_index];
         let ps = piece.start;
         let pl = piece.length;
         let start = piece.start + start_offset;
