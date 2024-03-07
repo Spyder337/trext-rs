@@ -1,3 +1,8 @@
+# Rust Ignores
 **/target
 **/.cargo-ok
 **/.DS_Store
+
+# Temporary Files
+**/.*~
+**/*.*~
