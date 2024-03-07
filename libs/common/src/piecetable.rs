@@ -31,14 +31,13 @@ pub struct PieceTable {
 
 impl PieceTable {
     pub fn new(orig_txt: &str) -> Self {
-        if orig_txt != "" {
+        if !orig_txt.is_empty() {
             Self {
                 buffers: vec![orig_txt.to_string(), String::new()],
                 pieces: vec![Piece::new(true, 0, orig_txt.len())],
                 text_len: orig_txt.len(),
             }
-        }
-        else {
+        } else {
             Self {
                 buffers: vec![String::new(), String::new()],
                 pieces: vec![],
@@ -72,7 +71,14 @@ impl PieceTable {
         None
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.pieces.is_empty()
+    }
+
     pub fn len(&self) -> usize {
+        if self.is_empty() {
+            return 0
+        }
         self.pieces.len()
     }
 
@@ -80,29 +86,27 @@ impl PieceTable {
         self.buffers[buffer_index].len()
     }
 
-    fn get_buffer_slice<'a>(&self, buffer: &str, start: usize, end: usize) -> String {
+    fn get_buffer_slice(&self, buffer: &str, start: usize, end: usize) -> String {
         buffer[start..end].to_string()
     }
 
     pub fn trim_piece(&mut self, piece_index: usize, start_offset: usize, length: usize) -> usize {
         let piece: &mut Piece = &mut self[piece_index];
 
-        let len: usize; //  Length of the slice to remove from the piece.
-
-        if length > piece.length {
-            len = piece.length - start_offset;
+        let len: usize = if length > piece.length {
+            piece.length - start_offset
         } else {
-            len = length;
-        }
+            length
+        };
 
         //  Example input Piece = "Hello, World!" : Indexes [0..13]
         //  start_offset = 0
         //  length = 6
-        
+
         let r_start = piece.start + start_offset; //  Start pos of slice in the piece
         let p_end = piece.start + piece.length; //  End pos of the piece
         let r_end = r_start + len; //  End pos of slice in the piece
-        
+
         let end_offset = p_end - r_end; //  Length from slice end to piece end
 
         //	Edge Case Deletions
@@ -226,19 +230,17 @@ impl PieceTable {
             self.text_len += p.length;
         }
     }
-    
-    pub fn delete(&mut self, start: usize, length: usize) {
-        let len: usize; //  Length of the slice to remove.
 
+    pub fn delete(&mut self, start: usize, length: usize) {
         if length == 0 {
             return;
         }
 
-        if (start + length) > self.text_len {
-            len = self.text_len - start;
+        let len: usize = if (start + length) > self.text_len {
+            self.text_len - start
         } else {
-            len = length;
-        }
+            length
+        };
 
         let end: usize = start + len; //  End position in the text buffer.
         let mut txt_start = 0; //  Starting position of a piece in the buffer.
@@ -408,13 +410,6 @@ impl PieceTable {
         let start = piece.start + start_offset;
         let end = piece.length - end_offset + start;
         self.get_buffer_slice(buffer, start, end)
-    }
-
-    fn merge_pieces(&mut self){
-        let new_orig = self.get_text(None, None);
-        let new_pt = PieceTable::new(&new_orig);
-        self.buffers = new_pt.buffers;
-        self.pieces = new_pt.pieces;
     }
 }
 

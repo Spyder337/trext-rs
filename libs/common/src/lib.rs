@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn get_piece_pos() {
-        let mut pt = new_test_table_large();
+        let pt = new_test_table_large();
         let pi = pt.get_pos_piece(6).unwrap();
         assert_eq!(pi, 2);
     }

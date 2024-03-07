@@ -117,23 +117,23 @@ pub trait App {
     Contains the logic for handling key events.
     */
     fn handle_key_events(&mut self, event: KeyEvent) -> AppResult {
-        let res = match event.kind {
+        
+        match event.kind {
             KeyEventKind::Press => self.handle_key_press(event.code),
             KeyEventKind::Repeat => self.handle_key_repeat(event.code),
             KeyEventKind::Release => self.handle_key_release(event.code),
-        };
-        res
+        }
     }
 
     /**
     Contains the logic for the main event loop. Window selection
     */
-    fn handle_events(&mut self, term: &mut Term) -> AppResult {
-        let res = match read()? {
+    fn handle_events(&mut self, _term: &mut Term) -> AppResult {
+        
+        match read()? {
             Event::Key(ke) => self.handle_key_events(ke),
             _ => Ok(()),
-        };
-        res
+        }
     }
 
     /**
@@ -141,9 +141,7 @@ pub trait App {
     */
     fn run(&mut self) -> AppResult {
         //  Check that the program initialized correctly.
-        if let Err(err) = self.init() {
-            return Err(err);
-        }
+        self.init()?;
 
         //  Check that the terminal was created successfully.
         let term_res = self.get_term();
