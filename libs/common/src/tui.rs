@@ -35,7 +35,7 @@ pub trait App {
     /**
     Retruns the application's `term` variable.
     */
-    fn get_term(&mut self) -> Result<Option<&mut Term>>;
+    fn get_term(&self) -> Option<RefMut<Term>>;
 
     //  Terminal Specific Functions
     //  handle_events and handle_key_press will be implemented
@@ -58,7 +58,7 @@ pub trait App {
     The logic could contain references to a dictionary of widgets that get optionally 
     rendered or a single widget application.
     */
-    fn render(&mut self);
+    fn render(&self);
 
     //  Core Application Functions
     //  These functions are predefined and not meant to be overwritten.
@@ -123,21 +123,24 @@ pub trait App {
         //  Check that the program initialized correctly.
         self.init()?;
 
-        //  Check that the terminal was created successfully.
-        let term_res = self.get_term();
-        if let Err(err) = term_res {
-            //  Close out the terminal.
-            self.deinit()?;
-            return Err(err);
-        } 
-        else {
-            loop {
-                if self.can_exit() {
-                    break;
-                }
-                self.render();
-                self.handle_events()?;
+        //  Force term_res to be dropped at the end of scope.
+        //  Thus freeing a borrow.
+        {
+            //  Check that the terminal was created successfully.
+            //  TODO: Create Error for the terminal failing to initialize.
+            let term_res = self.get_term();
+            if term_res.is_none() {
+                self.deinit()?;
+                return Ok(())
             }
+        }
+
+        loop {
+            if self.can_exit() {
+                break;
+            }
+            self.render();
+            self.handle_events()?;
         }
 
         //  Close out the terminal.
