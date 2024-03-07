@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{prelude::{CrosstermBackend, Terminal}, Frame};
+use ratatui::prelude::{CrosstermBackend, Terminal};
 use std::{cell::RefMut, io::{stdout, Error, ErrorKind, Result, Stdout}};
 
 pub type AppResult = Result<()>;

@@ -39,7 +39,7 @@ impl App for Application {
 
     fn set_term(&mut self, term: Term) -> std::io::Result<bool> {
         self.term = Some(RefCell::new(term));
-        return Ok(true);
+        Ok(true)
     }
 
     fn get_term(&self) -> Option<RefMut<Term>> {
@@ -87,7 +87,10 @@ impl App for Application {
             crossterm::event::KeyCode::F(_) => todo!(),
             crossterm::event::KeyCode::Char(_) => todo!(),
             crossterm::event::KeyCode::Null => todo!(),
-            crossterm::event::KeyCode::Esc => Ok(self.toggle_exit()),
+            crossterm::event::KeyCode::Esc => {
+                self.toggle_exit();
+                Ok(())
+            },
             crossterm::event::KeyCode::CapsLock => todo!(),
             crossterm::event::KeyCode::ScrollLock => todo!(),
             crossterm::event::KeyCode::NumLock => todo!(),
@@ -100,11 +103,11 @@ impl App for Application {
         }
     }
 
-    fn handle_key_release(&mut self, key: crossterm::event::KeyCode) -> AppResult {
+    fn handle_key_release(&mut self, _key: crossterm::event::KeyCode) -> AppResult {
         Ok(())
     }
 
-    fn handle_key_repeat(&mut self, key: crossterm::event::KeyCode) -> AppResult {
+    fn handle_key_repeat(&mut self, _key: crossterm::event::KeyCode) -> AppResult {
         Ok(())
     }
 
