@@ -5,7 +5,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{prelude::{CrosstermBackend, Terminal}, Frame};
-use std::io::{stdout, Error, ErrorKind, Result, Stdout};
+use std::{cell::RefMut, io::{stdout, Error, ErrorKind, Result, Stdout}};
 
 pub type AppResult = Result<()>;
 pub type Term = Terminal<CrosstermBackend<Stdout>>;
@@ -35,7 +35,7 @@ pub trait App {
     /**
     Retruns the application's `term` variable.
     */
-    fn get_term(&mut self) -> Result<Option<Term>>;
+    fn get_term(&mut self) -> Result<Option<&mut Term>>;
 
     //  Terminal Specific Functions
     //  handle_events and handle_key_press will be implemented
@@ -58,7 +58,7 @@ pub trait App {
     The logic could contain references to a dictionary of widgets that get optionally 
     rendered or a single widget application.
     */
-    fn render(&mut self, frame: &mut Frame);
+    fn render(&mut self);
 
     //  Core Application Functions
     //  These functions are predefined and not meant to be overwritten.
@@ -108,7 +108,7 @@ pub trait App {
     /**
     Contains the logic for the main event loop. Window selection
     */
-    fn handle_events(&mut self, _term: &mut Term) -> AppResult {
+    fn handle_events(&mut self) -> AppResult {
         
         match read()? {
             Event::Key(ke) => self.handle_key_events(ke),
@@ -131,14 +131,12 @@ pub trait App {
             return Err(err);
         } 
         else {
-            //  If the terminal has a value then run the program.
-            if let Some(mut term) = term_res.unwrap() {
-                while !self.can_exit() {
-                    let ref_term: &mut Term = &mut term;
-                    ref_term.draw(|frame| self.render(frame))?;
-                    //  TODO: Create error handling for events and application.
-                    self.handle_events(ref_term)?;
+            loop {
+                if self.can_exit() {
+                    break;
                 }
+                self.render();
+                self.handle_events()?;
             }
         }
 
