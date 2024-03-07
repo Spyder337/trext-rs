@@ -1,4 +1,4 @@
 [workspace]
 resolver="2"
-members = ["trex-rs", "libs/common"]
+members = ["trext-rs", "libs/common"]
 

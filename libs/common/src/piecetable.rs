@@ -226,7 +226,7 @@ impl PieceTable {
             self.text_len += p.length;
         }
     }
-
+    
     pub fn delete(&mut self, start: usize, length: usize) {
         let len: usize; //  Length of the slice to remove.
 

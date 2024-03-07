@@ -1,4 +1,4 @@
-# trex-rs
+# trext-rs
 
 [![Crates.io](https://img.shields.io/crates/v/trex-rs.svg)](https://crates.io/crates/trex-rs)
 [![Docs.rs](https://docs.rs/trex-rs/badge.svg)](https://docs.rs/trex-rs)
