@@ -379,7 +379,7 @@ impl PieceTable {
         ret
     }
 
-    fn get_pos_piece(&self, char_index: usize) -> Option<usize> {
+    pub fn get_pos_piece(&self, char_index: usize) -> Option<usize> {
         for n in 0..self.pieces.len() {
             let p = self.pieces.get(n).unwrap();
             let end = p.start + p.length;

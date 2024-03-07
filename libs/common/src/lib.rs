@@ -71,4 +71,11 @@ mod tests {
         pt.delete(0, 11);
         test_text(&pt, "!");
     }
+
+    #[test]
+    fn get_piece_pos() {
+        let mut pt = new_test_table_large();
+        let pi = pt.get_pos_piece(6).unwrap();
+        assert_eq!(pi, 2);
+    }
 }
