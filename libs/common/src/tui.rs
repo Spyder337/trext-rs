@@ -7,28 +7,8 @@ use crossterm::{
 use ratatui::{prelude::{CrosstermBackend, Terminal}, Frame};
 use std::io::{stdout, Error, ErrorKind, Result, Stdout};
 
-type AppResult = Result<()>;
-type Term = Terminal<CrosstermBackend<Stdout>>;
-
-/**
-`BaseApp` contains all of the data necessary to run a terminal
-application.
-
-It is to be combined with an implementation of the `App` trait.
-*/
-struct BaseApp {
-    term: Option<Term>,
-    exit: bool,
-}
-
-impl BaseApp {
-    fn new() -> Self {
-        Self {
-            term: None,
-            exit: false,
-        }
-    }
-}
+pub type AppResult = Result<()>;
+pub type Term = Terminal<CrosstermBackend<Stdout>>;
 
 /**
 `App` contains all of the function definitions to run a terminal
