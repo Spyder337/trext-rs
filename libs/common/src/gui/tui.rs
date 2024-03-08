@@ -1,5 +1,5 @@
 use crate::gui::AppResult;
-use crate::Tui;
+use crate::gui::Tui;
 use crossterm::event::{DisableMouseCapture, EnableMouseCapture};
 use crossterm::terminal::{self, EnterAlternateScreen, LeaveAlternateScreen};
 use ratatui::backend::Backend;

@@ -5,7 +5,7 @@ use ratatui::{
     widgets::{Block, BorderType, Paragraph},
 };
 
-use crate::App;
+use crate::gui::App;
 
 use super::{AppResult, Executable, KeyEventHandler, Renderer};
 

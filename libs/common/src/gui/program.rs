@@ -2,7 +2,7 @@ use std::io::stderr;
 
 use crate::gui::Event;
 use crate::gui::{AppResult, Executable, KeyEventHandler, Renderer};
-use crate::{Program, Tui};
+use crate::gui::{Program, Tui};
 
 use crossterm::event::KeyEvent as CrosstermKeyEvent;
 use ratatui::Terminal;
