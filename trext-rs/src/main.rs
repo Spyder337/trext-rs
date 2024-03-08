@@ -1,11 +1,8 @@
-mod app;
+use common::{App, Program};
 
-use app::Application;
-use common::tui::App;
-use std::io::Result;
-
-fn main() -> Result<()> {
-    let mut app = Application::new();
-    app.run()?;
-    Ok(())
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let a = App::new();
+    let mut p = Program::new(a);
+    p.run().await
 }
