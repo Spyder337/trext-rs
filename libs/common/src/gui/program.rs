@@ -32,8 +32,8 @@ impl<T: Renderer + KeyEventHandler + Executable> Program<T> {
             match tui.events.next().await? {
                 Event::Tick => self.app.tick(),
                 Event::Key(ke) => self.handle_key_event(ke)?,
-                Event::Mouse(_) => todo!(),
-                Event::Resize(_, _) => todo!(),
+                Event::Mouse(_) => (),
+                Event::Resize(_, _) => (),
             }
         }
 
