@@ -1,16 +1,12 @@
-# trex-rs
+# trext-rs
 
-[![Crates.io](https://img.shields.io/crates/v/trex-rs.svg)](https://crates.io/crates/trex-rs)
-[![Docs.rs](https://docs.rs/trex-rs/badge.svg)](https://docs.rs/trex-rs)
-[![CI](https://github.com/Spyder337/trex-rs/workflows/CI/badge.svg)](https://github.com/Spyder337/trex-rs/actions)
+[![Crates.io](https://img.shields.io/crates/v/trex-rs.svg)]()
+[![Docs.rs](https://docs.rs/trex-rs/badge.svg)]()
+[![CI](https://github.com/Spyder337/trex-rs/workflows/CI/badge.svg)](https://github.com/Spyder337/trext-rs/actions)
 
-## Installation
-
-### Cargo
-
-* Install the rust toolchain in order to have cargo installed by following
-  [this](https://www.rust-lang.org/tools/install) guide.
-* run `cargo install trex-rs`
+# Trext-rs
+This is a text buffer implementation in rust. Why? Why not.
+Yaks won't shave themselves.
 
 ## License
  * MIT license
