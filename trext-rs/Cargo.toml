@@ -1,9 +1,9 @@
 [package]
-name = "trex-rs"
+name = "trext-rs"
 version = "0.1.0"
 edition = "2021"
 description = "Text editor exploration in Rust."
-repository = "https://github.com/Spyder337/trex-rs"
+repository = "https://github.com/Spyder337/trext-rs"
 license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -7,7 +7,7 @@ name = "common"
 version = "0.1.0"
 
 [[package]]
-name = "trex-rs"
+name = "trext-rs"
 version = "0.1.0"
 dependencies = [
  "common",
