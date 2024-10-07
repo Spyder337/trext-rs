@@ -94,11 +94,11 @@ impl PieceTable {
         //  Example input Piece = "Hello, World!" : Indexes [0..13]
         //  start_offset = 0
         //  length = 6
-        
+
         let r_start = piece.start + start_offset; //  Start pos of slice in the piece
         let p_end = piece.start + piece.length; //  End pos of the piece
         let r_end = r_start + len; //  End pos of slice in the piece
-        
+
         let end_offset = p_end - r_end; //  Length from slice end to piece end
 
         //	Edge Case Deletions
@@ -406,7 +406,7 @@ impl PieceTable {
         self.get_buffer_slice(buffer, start, end)
     }
 
-    fn merge_pieces(&mut self){
+    fn merge_pieces(&mut self) {
         let new_orig = self.get_text(None, None);
         let new_pt = PieceTable::new(&new_orig);
         self.buffers = new_pt.buffers;
