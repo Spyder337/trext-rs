@@ -1,4 +1,4 @@
-use std::{default, sync::Arc};
+use std::sync::Arc;
 
 const AVERAGE_BUFFER_SIZE: usize = 665535;
 
@@ -17,16 +17,28 @@ pub fn create_usize_array(arr: Vec<usize>) -> UintArray {
 }
 
 pub struct LineStarts {
-    pub line_starts: Vec<usize>, 
-    pub cr: usize, 
-    pub lf: usize, 
-    pub crlf: usize, 
-    pub is_basic_ascii: bool
+    pub line_starts: Vec<usize>,
+    pub cr: usize,
+    pub lf: usize,
+    pub crlf: usize,
+    pub is_basic_ascii: bool,
 }
 
 impl LineStarts {
-    fn new(line_starts: Vec<usize>, cr: usize, lf: usize, crlf: usize, is_basic_ascii: bool) -> Self {
-        LineStarts{ line_starts, cr, lf, crlf, is_basic_ascii }
+    fn new(
+        line_starts: Vec<usize>,
+        cr: usize,
+        lf: usize,
+        crlf: usize,
+        is_basic_ascii: bool,
+    ) -> Self {
+        LineStarts {
+            line_starts,
+            cr,
+            lf,
+            crlf,
+            is_basic_ascii,
+        }
     }
 }
 
@@ -49,15 +61,11 @@ pub fn create_line_starts_fast(str: Box<str>, readonly: bool) -> UintArray {
     todo!()
 }
 
+#[derive(Default)]
 pub enum NodeColor {
+    #[default]
     Black = 0,
     Red = 1,
-}
-
-impl Default for NodeColor {
-    fn default() -> Self {
-        NodeColor::Black
-    }
 }
 
 pub struct NodePosition {
@@ -85,8 +93,20 @@ pub struct Piece {
 }
 
 impl Piece {
-    pub fn new(buffer_index: usize, start: BufferCursor, end: BufferCursor, length: usize, line_feed_cnt: usize) -> Self{
-        Self{ buffer_index, start, end, length, line_feed_cnt }
+    pub fn new(
+        buffer_index: usize,
+        start: BufferCursor,
+        end: BufferCursor,
+        length: usize,
+        line_feed_cnt: usize,
+    ) -> Self {
+        Self {
+            buffer_index,
+            start,
+            end,
+            length,
+            line_feed_cnt,
+        }
     }
 }
 
@@ -101,7 +121,10 @@ pub struct StringBuffer {
 
 impl StringBuffer {
     pub fn new(buffer: String, line_starts: UintArray) -> Self {
-        Self { buffer, line_starts }
+        Self {
+            buffer,
+            line_starts,
+        }
     }
 }
 
@@ -121,7 +144,15 @@ pub struct TreeNode {
 
 impl TreeNode {
     pub fn new(piece: Option<Piece>, color: NodeColor) -> Self {
-        Self { piece, color, size_left: 0, line_feeds_left: 0, parent: None, left: None, right: None }
+        Self {
+            piece,
+            color,
+            size_left: 0,
+            line_feeds_left: 0,
+            parent: None,
+            left: None,
+            right: None,
+        }
     }
 
     pub fn next() -> Option<Self> {
@@ -132,9 +163,16 @@ impl TreeNode {
         todo!()
     }
 
-    pub fn detach() -> () {
-        
-    }
+    pub fn detach() {}
 }
 
-const SENTINEL: TreeNode = TreeNode{ piece: None, parent: None, left: None, right: None, color: NodeColor::Black, size_left: 0, line_feeds_left: 0 };
+//  I don't think this optimization is possible.
+const SENTINEL: TreeNode = TreeNode {
+    piece: None,
+    parent: None,
+    left: None,
+    right: None,
+    color: NodeColor::Black,
+    size_left: 0,
+    line_feeds_left: 0,
+};
