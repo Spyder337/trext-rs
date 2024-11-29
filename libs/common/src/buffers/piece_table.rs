@@ -365,7 +365,8 @@ impl TextBuffer for PieceTable {
             if on_start {
                 //  Create the BufferPositions and then the piece.
                 let start_rem = buffer.len();
-                let end_rem = 0;
+                let end_rem = start_rem - txt_len;
+                println!("Remainders: ({}, {})", start_rem, end_rem);
                 let start = BufferPosition {
                     index: last,
                     remainder: start_rem,
@@ -431,14 +432,16 @@ impl TextBuffer for PieceTable {
             self.pieces.insert(piece_idx, left);
         }
 
-        if success {
-            // println!("Inserted: \"{}\"", txt);
-            let pI = piece_idx + 1;
-            // println!("Index: {}", pI);
+        if !success {
+            return;
+        }
+
+        if on_start {
+            let p_idx = 0;
             let mut idx = 0;
             for p in &mut self.pieces {
                 if p.buffer_index == last {
-                    if idx != pI {
+                    if idx != p_idx {
                         p.start.remainder += txt_len;
                         p.end.remainder += txt_len;
                         // println!("{} : {:?}", idx, p);
@@ -446,6 +449,22 @@ impl TextBuffer for PieceTable {
                 }
                 idx += 1;
             }
+            return;
+        }
+
+        // println!("Inserted: \"{}\"", txt);
+        let pI = piece_idx + 1;
+        // println!("Index: {}", pI);
+        let mut idx = 0;
+        for p in &mut self.pieces {
+            if p.buffer_index == last {
+                if idx != pI {
+                    p.start.remainder += txt_len;
+                    p.end.remainder += txt_len;
+                    // println!("{} : {:?}", idx, p);
+                }
+            }
+            idx += 1;
         }
     }
 
