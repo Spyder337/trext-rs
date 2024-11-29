@@ -51,21 +51,6 @@ fn insert_middle() {
 }
 
 #[test]
-fn trim_piece_edge() {
-    let mut pt = new_test_table();
-    pt.trim_piece(0, 0, 6);
-    test_text(&pt, "World!");
-}
-
-#[test]
-fn trim_piece_middle() {
-    let mut pt = new_test_table();
-
-    pt.trim_piece(0, 5, 1);
-    test_text(&pt, "HelloWorld!");
-}
-
-#[test]
 fn delete_start() {
     let mut pt = new_test_table_split();
 

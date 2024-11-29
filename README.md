@@ -22,7 +22,7 @@ There are several benifits to `PieceTree` and `PieceTable` over a `GapBuffer`.
 
 **Progress**:
 
-- [ ] PieceTable
+- [x] PieceTable
 - [ ] PieceTree
 
 | Feature           | `PieceTable` | `PieceTree` |
@@ -34,10 +34,12 @@ There are several benifits to `PieceTree` and `PieceTable` over a `GapBuffer`.
 | Buffer Count      |      X       |             |
 | Total Buffer Size |      X       |             |
 | Insert Piece      |      X       |             |
-| Delete Piece      |              |             |
+| Delete Piece      |      X       |             |
 | Read Piece        |      X       |             |
 
 ## Layout
+
+Text in a document is composed of lexical layers that compose the layout.
 
 ### Hierarchy
 
@@ -48,6 +50,29 @@ Each item in the list is used to compose the next one.
 1. Lines
 1. Pages
 1. Documents
+
+## Rendering
+
+There are several 'levels' to rendering a document.
+The first is simple font rendering.
+The second step is line rendering. When rendering a document by lines it makes it easier to apply graphical transformations on text. An easy example of this is the WSYWIG editor [Obsidian](https://obsidian.md).
+
+Rendering will most likely be done via OpenGL through [gl](https://crates.io/crates/gl) and [glutin](https://crates.io/crates/glutin).
+
+### Pipeline
+
+1. Styling: Parse markup, query system for fonts
+1. Layout: Break text into lines
+1. Shaping: Shaping compute the glyphs in a line and their positions
+1. Rasterization: Rasterize needed glyphs into an atlas/cache.
+1. Composition: Copy glyphs from the atlas to the canvas
+
+### Font Rendering
+
+Font parsing is a pain in the ass.
+[ttf-parser](https://crates.io/crates/ttf-parser)
+Font rendering is a pain in the ass.
+[msdfgen-rs](https://github.com/katyo/msdfgen-rs)
 
 ## Crates
 
@@ -77,3 +102,4 @@ regex = "1.11.1"
 - [Piece Table](https://en.wikipedia.org/wiki/Piece_table)
 - [Gap Buffer](https://en.wikipedia.org/wiki/Gap_buffer)
 - [Craft Text Editing](https://web.mit.edu/~yandros/doc/craft-text-editing/index.html)
+- [Font Rendering Hates You](https://faultlore.com/blah/text-hates-you/)

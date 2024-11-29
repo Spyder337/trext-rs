@@ -23,7 +23,7 @@ impl PieceTable {
     }
 
     /// Trims a piece based on a slice.
-    pub fn trim_piece(
+    fn trim_piece(
         &mut self,
         piece_index: usize,
         start_offset: usize,
@@ -103,7 +103,7 @@ impl PieceTable {
         len
     }
 
-    pub fn split_at(p: &Piece, pos: usize) -> (Piece, Piece) {
+    fn split_at(p: &Piece, pos: usize) -> (Piece, Piece) {
         let mut left = Piece {
             buffer_index: p.buffer_index,
             start: BufferPosition {

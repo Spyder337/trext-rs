@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use common::buffers::*;
 fn main() {
     book_tests();
