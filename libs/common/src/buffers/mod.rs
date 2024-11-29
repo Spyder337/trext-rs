@@ -1,10 +1,12 @@
 pub mod buffer;
 pub mod piece;
 pub mod piece_table;
+pub mod piece_tree;
 
 pub use buffer::*;
 pub use piece::*;
 pub use piece_table::*;
+pub use piece_tree::*;
 
 use regex::Regex;
 
