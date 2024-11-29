@@ -31,7 +31,9 @@ pub trait TextBuffer {
     /// Insert a string into the `TextBuffer`.
     fn insert(&mut self, txt: &str, pos: usize);
     /// Delete a section of text starting at `start` and ending at `start + length`.
-    fn delete(&mut self, start: usize, length: usize);
+    ///
+    /// Returns the size of slice that was deleted.
+    fn delete(&mut self, start: usize, length: usize) -> usize;
 }
 
 pub fn line_starts(txt: &str) -> Vec<usize> {

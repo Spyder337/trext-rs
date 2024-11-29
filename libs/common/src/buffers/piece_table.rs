@@ -29,51 +29,69 @@ impl PieceTable {
         start_offset: usize,
         length: usize,
     ) -> usize {
+        // println!("\ntrim_piece\n");
+        let b_idx = self.pieces[piece_index].buffer_index;
+        let b_len = self.buffers[b_idx].len();
         let piece: &mut Piece = self.index_mut(piece_index);
         // let buffer = &self.buffers[piece.buffer_index];
 
         let len: usize; //  Length of the slice to remove from the piece.
+
+        // println!("Length Values:\nParameter: {}", length);
 
         if length > piece.len() {
             len = piece.len() - start_offset;
         } else {
             len = length;
         }
-
+        // println!("Len: {}\n", len);
         //  Example input Piece = "Hello, World!" : Indexes [0..13]
         //  start_offset = 0
         //  length = 6
+        let b_start = b_len - piece.start.remainder + start_offset;
+        let b_end = b_start + len;
+        // println!("Buffer Size: {}", b_len);
+        // println!("Buffer Positions:\nStart: {}\nEnd: {}", b_start, b_end);
 
-        let r_start = piece.start.remainder + start_offset; //  Start pos of slice in the piece
-        let p_end = piece.end.remainder; //  End pos of the piece
-        let r_end = r_start - len; //  End pos of slice in the piece
-
-        let end_offset = p_end - r_end; //  Length from slice end to piece end
-
+        let end_offset: usize = piece.len() - len;
+        // println!("Offsets: ({}, {})", start_offset, end_offset);
         //	Edge Case Deletions
         //	Whole pieces
         if start_offset == 0 && end_offset == 0 {
             self.pieces.remove(piece_index);
+            // println!("\ntrim_piece DONE\n");
             return len;
         }
         //	Start
         //	[0..6] in "Hello, World!" is " World!"
         if start_offset == 0 {
-            piece.start.remainder += start_offset;
+            piece.start.remainder -= len;
         }
         //	End
         //	[8..] in "Hello, World!" is "Hello, "
         else if end_offset == 0 {
-            piece.end.remainder -= end_offset;
+            piece.end.remainder += len;
         }
         //	Middle
         //	[2..12] in "Hellow, World!" is "Held!"
         else {
             //	Create a left piece = [0..2]  : "He" in "Hello, World!"
             //  Create a right piece = [12..] : "ld!" in "Hello, World!"
+            let (left, mut right) = Self::split_at(&piece, start_offset);
+            // println!("Left: {:?}\nRight: {:?}", left, right);
+            right.start.remainder -= len;
+            // println!(
+            //     "Left: {}\nRight: {}",
+            //     self.piece_text(&left, (0, 0)),
+            //     self.piece_text(&right, (0, 0))
+            // );
+            self.pieces.remove(piece_index);
+            self.pieces.insert(piece_index, right);
+            self.pieces.insert(piece_index, left);
         }
 
-        r_end - r_start
+        // println!("\ntrim_piece DONE\n");
+        len
     }
 
     /// Returns the length of the total buffer.
@@ -85,7 +103,7 @@ impl PieceTable {
         len
     }
 
-    pub fn split_at(&self, p: &Piece, pos: usize) -> (Piece, Piece) {
+    pub fn split_at(p: &Piece, pos: usize) -> (Piece, Piece) {
         let mut left = Piece {
             buffer_index: p.buffer_index,
             start: BufferPosition {
@@ -98,7 +116,6 @@ impl PieceTable {
             },
             line_starts: vec![],
         };
-        left.line_starts = line_starts(&self.piece_text(&left, (0, 0)));
 
         let mut right = Piece {
             buffer_index: p.buffer_index,
@@ -112,9 +129,19 @@ impl PieceTable {
             },
             line_starts: vec![],
         };
-        right.line_starts = line_starts(&self.piece_text(&right, (0, 0)));
 
-        (left, right)
+        if p.line_starts.is_empty() {
+            (left, right)
+        } else {
+            for i in &p.line_starts {
+                if *i <= pos {
+                    left.line_starts.push(*i);
+                } else {
+                    right.line_starts.push(*i);
+                }
+            }
+            (left, right)
+        }
     }
 }
 
@@ -381,7 +408,7 @@ impl TextBuffer for PieceTable {
             let orig = &self.pieces[piece_idx];
 
             let offset = pos;
-            let (left, right) = self.split_at(orig, offset);
+            let (left, right) = Self::split_at(orig, offset);
             let start_rem = buffer.len();
             let end_rem = 0;
             let start = BufferPosition {
@@ -422,11 +449,11 @@ impl TextBuffer for PieceTable {
         }
     }
 
-    fn delete(&mut self, start: usize, length: usize) {
+    fn delete(&mut self, start: usize, length: usize) -> usize {
         let len: usize;
 
         if length == 0 {
-            return;
+            return 0;
         }
 
         //  If the length produces an index that is out of bounds then
@@ -450,8 +477,9 @@ impl TextBuffer for PieceTable {
         let mut found_start = false; //  Found the start of the slice in the buffer.
         let mut found_end = false; //  Found the end of the slice in the buffer.
 
-        let piece_cnt = self.len();
+        let piece_cnt = self.pieces.len();
 
+        //  Iterate over the pieces to get the starting and ending positions.
         for i in 0..piece_cnt {
             let p = &self.pieces[i];
             txt_start = txt_end;
@@ -478,35 +506,60 @@ impl TextBuffer for PieceTable {
         let mut trimmed: usize = 0;
         let mut total: usize = 0;
 
+        //  If the slice is a single piece slice then slice that piece
+        //  and return.
         if piece_start == piece_end {
+            let p_len = self[piece_start].len();
             trimmed = self.trim_piece(piece_start, start_so, len);
             total += trimmed;
-        } else {
-            let mut removed_offset = 0;
-            let mut init_start = false;
+            println!("Trimmed: {}\nLength: {}", trimmed, p_len);
+            return total;
+        }
+        let mut removed_offset = 0;
 
-            for i in piece_start..piece_end {
-                if !init_start && i == piece_start {
-                    let len = self[i].len();
-                    trimmed = self.trim_piece(i, start_so, len);
-                    total += trimmed;
-                    if trimmed == len {
-                        removed_offset += 1;
-                    }
-                    init_start = true;
-                } else {
-                    let pi = i - removed_offset;
-                    trimmed = self.trim_piece(pi, 0, len);
-                    total += trimmed;
+        //  Iterate over the pieces that need to be deleted.
+        //  The iterator stops one piece before the end.
+        for i in piece_start..(piece_end) {
+            println!(
+                "Piece Index: {}\nPiece Length: {}\n",
+                i - removed_offset,
+                self[i - removed_offset].len()
+            );
+            // println!("Trimming Piece {}...", i);
+            //  The start uses the offset found earlier
+            if i == piece_start {
+                let p_len = self[i].len();
+                trimmed = self.trim_piece(i, start_so, self[i].len());
+                total += trimmed;
+                //  If a piece is deleted then the index shifts over to the left.
+                println!("Trimmed: {}\nLength: {}", trimmed, p_len);
+                if start_so == 0 {
                     removed_offset += 1;
+                    println!("Removed: {}", removed_offset);
                 }
             }
-
-            let idx = piece_end - removed_offset;
-
-            trimmed = self.trim_piece(idx, 0, piece_end_pos);
-            total += trimmed;
+            //  The piece is a middle piece in the slices. This means that these
+            //  slices will have a start_offset of 0. The length passed into
+            //  the trim_piece function will be the pieces length.
+            else {
+                let pi = i - removed_offset;
+                println!("{:?}", self[pi]);
+                trimmed = self.trim_piece(pi, 0, self[pi].len());
+                total += trimmed;
+                removed_offset += 1;
+                println!("Removed: {}", removed_offset);
+                println!("Trimmed: {}", trimmed);
+            }
+            println!("Pieces Remaining: {}", self.pieces.len());
         }
+        println!("\nFinished Trimming First Section.");
+        let idx = piece_end - removed_offset;
+        println!("Piece Ending Pos: {}", piece_end_pos);
+        println!("End Piece: {}\nEnd Pos: {}", idx, piece_end_pos);
+        trimmed = self.trim_piece(idx, 0, piece_end_pos);
+        total += trimmed;
+
+        total
     }
 }
 

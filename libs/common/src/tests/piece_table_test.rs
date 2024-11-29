@@ -1,5 +1,4 @@
 #[cfg(test)]
-
 use crate::buffers::PieceTable;
 use crate::buffers::TextBuffer;
 
@@ -43,7 +42,7 @@ fn middle_insert() {
 #[test]
 fn trim_piece_edge() {
     let mut pt = new_test_table();
-    pt.trim_piece(0,0, 6);
+    pt.trim_piece(0, 0, 6);
     test_text(&pt, "World!");
 }
 
@@ -51,9 +50,8 @@ fn trim_piece_edge() {
 fn trim_piece_middle() {
     let mut pt = new_test_table();
 
-    pt.trim_piece(0, 0, 5);
+    pt.trim_piece(0, 5, 1);
     test_text(&pt, "HelloWorld!");
-    assert_eq!(pt.len(), 2);
 }
 
 #[test]
@@ -70,7 +68,14 @@ fn delete_boundary_piece() {
 #[test]
 fn delete_piece_range() {
     let mut pt = new_test_table_split();
-
+    println!("{:?}", pt);
     pt.delete(0, 11);
     assert_eq!(&pt.text(0, None), "!");
+}
+
+#[test]
+fn delete_zero() {
+    let mut pt = new_test_table_split();
+    let res = pt.delete(0, 0);
+    assert_eq!(res, 0);
 }

@@ -1,4 +1,4 @@
-use super::{line_starts, BufferPosition, PieceTable};
+use super::{BufferPosition, PieceTable};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
@@ -7,6 +7,12 @@ pub struct Piece {
     pub start: BufferPosition,
     pub end: BufferPosition,
     pub line_starts: Vec<usize>,
+}
+
+impl Drop for Piece {
+    fn drop(&mut self) {
+        
+    }
 }
 
 impl Piece {
