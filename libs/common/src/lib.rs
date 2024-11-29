@@ -1,4 +1,4 @@
 #![allow(dead_code)]
-pub mod piecetable;
-pub mod piecetree;
+#![feature(iter_collect_into)]
+pub mod buffers;
 mod tests;
