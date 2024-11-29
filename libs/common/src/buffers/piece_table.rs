@@ -1,3 +1,5 @@
+#![allow(unused_assignments)]
+#![allow(unused_variables)]
 use std::{
     fs::read_to_string,
     ops::{Index, IndexMut},
@@ -30,8 +32,8 @@ impl PieceTable {
         length: usize,
     ) -> usize {
         // println!("\ntrim_piece\n");
-        let b_idx = self.pieces[piece_index].buffer_index;
-        let b_len = self.buffers[b_idx].len();
+        // let b_idx = self.pieces[piece_index].buffer_index;
+        // let b_len = self.buffers[b_idx].len();
         let piece: &mut Piece = self.index_mut(piece_index);
         // let buffer = &self.buffers[piece.buffer_index];
 
@@ -48,8 +50,8 @@ impl PieceTable {
         //  Example input Piece = "Hello, World!" : Indexes [0..13]
         //  start_offset = 0
         //  length = 6
-        let b_start = b_len - piece.start.remainder + start_offset;
-        let b_end = b_start + len;
+        // let b_start = b_len - piece.start.remainder + start_offset;
+        // let b_end = b_start + len;
         // println!("Buffer Size: {}", b_len);
         // println!("Buffer Positions:\nStart: {}\nEnd: {}", b_start, b_end);
 
@@ -181,19 +183,16 @@ impl TextBuffer for PieceTable {
 
     fn text(&self, start_pos: usize, end_pos: Option<usize>) -> String {
         let mut txt = String::new();
-        let has_end: bool;
         let end: usize;
 
         if let Some(pos) = end_pos {
             end = pos;
-            has_end = true;
         } else {
             let mut val = 0;
             for i in &self.pieces {
                 val += i.len();
             }
             end = val;
-            has_end = false;
         }
 
         //  Position in the txt buffer.
@@ -202,7 +201,6 @@ impl TextBuffer for PieceTable {
 
         for i in 0..self.pieces.len() {
             let p = &self[i];
-            i == 0;
 
             txt_start = txt_end;
             txt_end += p.len();
@@ -453,12 +451,12 @@ impl TextBuffer for PieceTable {
         }
 
         // println!("Inserted: \"{}\"", txt);
-        let pI = piece_idx + 1;
+        let p_idx = piece_idx + 1;
         // println!("Index: {}", pI);
         let mut idx = 0;
         for p in &mut self.pieces {
             if p.buffer_index == last {
-                if idx != pI {
+                if idx != p_idx {
                     p.start.remainder += txt_len;
                     p.end.remainder += txt_len;
                     // println!("{} : {:?}", idx, p);

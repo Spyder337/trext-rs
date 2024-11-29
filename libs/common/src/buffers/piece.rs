@@ -9,12 +9,6 @@ pub struct Piece {
     pub line_starts: Vec<usize>,
 }
 
-impl Drop for Piece {
-    fn drop(&mut self) {
-        
-    }
-}
-
 impl Piece {
     pub fn new(
         buffer: usize,

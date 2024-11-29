@@ -6,7 +6,6 @@ pub mod piece_tree;
 pub use buffer::*;
 pub use piece::*;
 pub use piece_table::*;
-pub use piece_tree::*;
 
 use regex::Regex;
 
